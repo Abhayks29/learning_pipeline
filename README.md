@@ -93,7 +93,17 @@ Admins can assign or change team roles via the Users panel in the nav.
 
 ## Screenshots
 
-> Dashboard with stage overview, episode cards, and progress bars.
+### Login
+![Login Page](screenshots/login.png)
+
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+### Episode Detail
+![Episode Detail](screenshots/episode_detail.png)
+
+### Team View
+![Team View](screenshots/team_view.png)
 
 ## License
 
