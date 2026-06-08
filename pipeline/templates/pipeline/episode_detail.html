@@ -1,0 +1,109 @@
+{% extends 'pipeline/base.html' %}
+
+{% block title %}{{ episode.title }}{% endblock %}
+
+{% block content %}
+<div style="margin-top:1.5rem;">
+  <a href="{% url 'dashboard' %}" class="btn btn-secondary btn-sm" style="margin-bottom:1rem;">&larr; Back</a>
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ episode.title }}</h1>
+      <div style="color:var(--muted); font-size:0.875rem; margin-top:0.25rem;">
+        Created by {{ episode.created_by.username|default:"—" }} &middot; {{ episode.created_at|date:"M d, Y" }}
+        {% for tag in episode.get_tags_list %}
+        &nbsp;<span class="tag">{{ tag }}</span>
+        {% endfor %}
+      </div>
+    </div>
+    {% if can_advance %}
+    <a href="{% url 'stage_submit' episode.pk %}" class="btn btn-primary">
+      Submit {{ episode.get_current_stage_display }} &rarr;
+    </a>
+    {% endif %}
+  </div>
+
+  {% if episode.description %}
+  <p style="color:var(--muted); margin-bottom:1.5rem;">{{ episode.description }}</p>
+  {% endif %}
+
+  <!-- Pipeline progress steps -->
+  <div class="pipeline-steps">
+    {% for stage in stage_order %}
+    <div class="pipeline-step
+      {% if episode.current_stage == stage %}active {{ stage }}
+      {% elif stage == 'scripting' and episode.current_stage != 'scripting' %}completed
+      {% elif stage == 'recording' and episode.current_stage == 'animation' %}completed
+      {% elif stage == 'recording' and episode.current_stage == 'editing' %}completed
+      {% elif stage == 'recording' and episode.current_stage == 'done' %}completed
+      {% elif stage == 'animation' and episode.current_stage == 'editing' %}completed
+      {% elif stage == 'animation' and episode.current_stage == 'done' %}completed
+      {% elif stage == 'editing' and episode.current_stage == 'done' %}completed
+      {% endif %}">
+      {% if stage == 'scripting' %}✍️ Scripting
+      {% elif stage == 'recording' %}🎙️ Recording
+      {% elif stage == 'animation' %}🎨 Animation
+      {% elif stage == 'editing' %}✂️ Editing
+      {% else %}✅ Done{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+  <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem; margin-top:1.5rem;">
+
+    <!-- Stage overview -->
+    <div class="card">
+      <h3 style="font-size:1rem; margin-bottom:1rem; color:var(--muted);">Stage Overview</h3>
+      {% for stage_key, stage_label in episode.STAGE_CHOICES %}
+      {% if stage_key != 'done' %}
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:0.6rem 0; border-bottom:1px solid var(--border);">
+        <span style="font-size:0.9rem;">
+          <span class="stage-dot dot-{{ stage_key }}"></span>
+          {{ stage_label }}
+        </span>
+        <span>
+          {% for sub in submissions %}
+            {% if sub.stage == stage_key %}
+            <span style="font-size:0.75rem; color:var(--editing);">&#10003; {{ sub.submitted_by.username }}</span>
+            {% endif %}
+          {% endfor %}
+          {% if episode.current_stage == stage_key %}
+          <span class="stage-badge stage-{{ stage_key }}">In Progress</span>
+          {% endif %}
+        </span>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+
+    <!-- Submission history -->
+    <div class="card">
+      <h3 style="font-size:1rem; margin-bottom:1rem; color:var(--muted);">Submission History</h3>
+      {% if submissions %}
+        {% for sub in submissions %}
+        <div class="submission-item">
+          <div class="sub-icon stage-{{ sub.stage }}">
+            {% if sub.stage == 'scripting' %}✍️{% elif sub.stage == 'recording' %}🎙️{% elif sub.stage == 'animation' %}🎨{% else %}✂️{% endif %}
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:0.875rem; font-weight:600;">{{ sub.get_stage_display }}</div>
+            <div class="sub-meta">by {{ sub.submitted_by.username }} &middot; {{ sub.submitted_at|date:"M d, Y H:i" }}</div>
+            {% if sub.notes %}
+            <div style="font-size:0.8rem; color:var(--muted); margin-top:0.3rem;">{{ sub.notes }}</div>
+            {% endif %}
+            {% if sub.file %}
+            <div style="margin-top:0.3rem;">
+              <a href="{{ sub.file.url }}" class="btn btn-secondary btn-sm" target="_blank">Download File</a>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div style="text-align:center; color:var(--muted); padding:1.5rem;">No submissions yet.</div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

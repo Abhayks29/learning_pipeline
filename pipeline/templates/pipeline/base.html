@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Pipeline{% endblock %} — LearnFlow</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+{% if user.is_authenticated %}
+<nav>
+  <span class="nav-brand">LearnFlow Pipeline</span>
+  <div class="nav-links">
+    <a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a>
+    <a href="{% url 'team_view' 'scripting' %}" class="nav-link">Scripting</a>
+    <a href="{% url 'team_view' 'recording' %}" class="nav-link">Recording</a>
+    <a href="{% url 'team_view' 'animation' %}" class="nav-link">Animation</a>
+    <a href="{% url 'team_view' 'editing' %}" class="nav-link">Editing</a>
+    {% if user.profile.team == 'admin' or user.is_superuser %}
+    <a href="{% url 'admin_users' %}" class="nav-link">Users</a>
+    {% endif %}
+  </div>
+  <div class="nav-user">
+    <span>{{ user.username }}</span>
+    <span class="team-badge stage-{{ user.profile.team }}">{{ user.profile.get_team_display }}</span>
+    <a href="{% url 'logout' %}" class="btn btn-secondary btn-sm">Logout</a>
+  </div>
+</nav>
+{% endif %}
+
+<div class="container">
+  {% if messages %}
+  <ul class="messages" style="margin-top:1rem;">
+    {% for message in messages %}
+    <li class="{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>

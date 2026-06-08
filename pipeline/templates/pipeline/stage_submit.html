@@ -1,0 +1,50 @@
+{% extends 'pipeline/base.html' %}
+
+{% block title %}Submit {{ stage_label }}{% endblock %}
+
+{% block content %}
+<div style="max-width:600px; margin: 2rem auto;">
+  <a href="{% url 'episode_detail' episode.pk %}" class="btn btn-secondary btn-sm" style="margin-bottom:1.5rem;">&larr; Back to Episode</a>
+
+  <div class="card">
+    <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1.5rem;">
+      <div style="font-size:1.8rem;">
+        {% if episode.current_stage == 'scripting' %}✍️
+        {% elif episode.current_stage == 'recording' %}🎙️
+        {% elif episode.current_stage == 'animation' %}🎨
+        {% elif episode.current_stage == 'editing' %}✂️{% endif %}
+      </div>
+      <div>
+        <h2 style="font-size:1.1rem;">Submit {{ stage_label }} Work</h2>
+        <div style="color:var(--muted); font-size:0.875rem;">Episode: {{ episode.title }}</div>
+      </div>
+    </div>
+
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:0.75rem; margin-bottom:1.5rem; font-size:0.85rem; color:var(--muted);">
+      Submitting will mark <strong style="color:var(--text);">{{ stage_label }}</strong> as complete and move the episode to the next stage.
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-group">
+        <label class="form-label">Upload File <span style="color:var(--muted); font-size:0.8rem;">(optional)</span></label>
+        {{ form.file }}
+        <div style="font-size:0.75rem; color:var(--muted); margin-top:0.3rem;">
+          {% if episode.current_stage == 'scripting' %}Upload the script document (PDF, DOCX, etc.)
+          {% elif episode.current_stage == 'recording' %}Upload the raw recording file
+          {% elif episode.current_stage == 'animation' %}Upload animation assets or video
+          {% elif episode.current_stage == 'editing' %}Upload the final edited video{% endif %}
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes for Next Team</label>
+        {{ form.notes }}
+      </div>
+      <div style="display:flex; gap:1rem;">
+        <button type="submit" class="btn btn-success">Submit & Advance Stage</button>
+        <a href="{% url 'episode_detail' episode.pk %}" class="btn btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

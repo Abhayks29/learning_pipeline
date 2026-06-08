@@ -1,0 +1,70 @@
+{% extends 'pipeline/base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header" style="margin-top:1.5rem;">
+  <h1 class="page-title">Pipeline Dashboard</h1>
+  <a href="{% url 'episode_create' %}" class="btn btn-primary">+ New Episode</a>
+</div>
+
+<div class="stats-row">
+  <div class="stat-card">
+    <div class="stat-number" style="color:var(--scripting);">{{ stage_counts.scripting|default:0 }}</div>
+    <div class="stat-label">Scripting</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number" style="color:var(--recording);">{{ stage_counts.recording|default:0 }}</div>
+    <div class="stat-label">Recording</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number" style="color:var(--animation);">{{ stage_counts.animation|default:0 }}</div>
+    <div class="stat-label">Animation</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number" style="color:var(--editing);">{{ stage_counts.editing|default:0 }}</div>
+    <div class="stat-label">Editing</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number" style="color:var(--done);">{{ stage_counts.done|default:0 }}</div>
+    <div class="stat-label">Done</div>
+  </div>
+</div>
+
+{% if episodes %}
+<div class="episode-grid">
+  {% for ep in episodes %}
+  <a href="{% url 'episode_detail' ep.pk %}" style="text-decoration:none;">
+    <div class="episode-card">
+      <div class="episode-info">
+        <div class="episode-title">{{ ep.title }}</div>
+        <div class="episode-meta">
+          <span>{{ ep.created_by.username|default:"—" }}</span>
+          <span>{{ ep.created_at|date:"M d, Y" }}</span>
+          {% for tag in ep.get_tags_list %}
+          <span class="tag">{{ tag }}</span>
+          {% endfor %}
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: {{ ep.progress_percent }}%;"></div>
+        </div>
+      </div>
+      <div>
+        <span class="stage-badge stage-{{ ep.current_stage }}">
+          <span class="stage-dot dot-{{ ep.current_stage }}"></span>
+          {{ ep.get_current_stage_display }}
+        </span>
+      </div>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="empty-icon">📋</div>
+  <p>No episodes yet. Create the first one!</p>
+  <br>
+  <a href="{% url 'episode_create' %}" class="btn btn-primary">+ New Episode</a>
+</div>
+{% endif %}
+{% endblock %}

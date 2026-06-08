@@ -1,0 +1,95 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — LearnFlow Pipeline</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+<div class="split-login">
+
+  <!-- LEFT: Branding -->
+  <div class="split-left">
+    <div class="split-left-inner">
+      <div class="brand-logo">
+        <span class="brand-icon">⚡</span>
+        <span class="brand-name">LearnFlow</span>
+      </div>
+
+      <h2 class="brand-headline">One platform for your entire content team.</h2>
+      <p class="brand-sub">Track every episode from first draft to final cut — no more chasing updates over chat.</p>
+
+      <div class="team-steps">
+        <div class="team-step">
+          <div class="step-icon step-scripting">✍️</div>
+          <div>
+            <div class="step-title">Scripting</div>
+            <div class="step-desc">Write and upload episode scripts with tags</div>
+          </div>
+        </div>
+        <div class="step-arrow">↓</div>
+        <div class="team-step">
+          <div class="step-icon step-recording">🎙️</div>
+          <div>
+            <div class="step-title">Recording</div>
+            <div class="step-desc">Record and attach audio to each episode</div>
+          </div>
+        </div>
+        <div class="step-arrow">↓</div>
+        <div class="team-step">
+          <div class="step-icon step-animation">🎨</div>
+          <div>
+            <div class="step-title">Animation</div>
+            <div class="step-desc">Add visuals and motion graphics</div>
+          </div>
+        </div>
+        <div class="step-arrow">↓</div>
+        <div class="team-step">
+          <div class="step-icon step-editing">✂️</div>
+          <div>
+            <div class="step-title">Editing</div>
+            <div class="step-desc">Final cut and quality check</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Form -->
+  <div class="split-right">
+    <div class="split-form-wrap">
+      <div class="form-header">
+        <h1 class="form-title">Welcome back</h1>
+        <p class="form-subtitle">Sign in to access your pipeline dashboard</p>
+      </div>
+
+      {% if form.errors %}
+      <div class="alert-error">
+        <span>⚠</span> Invalid username or password. Please try again.
+      </div>
+      {% endif %}
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          {{ form.username }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          {{ form.password }}
+        </div>
+        <button type="submit" class="btn btn-primary btn-login">Sign In →</button>
+      </form>
+
+      <div class="login-footer">
+        <span>LearnFlow Pipeline &copy; 2025</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

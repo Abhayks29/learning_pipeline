@@ -1,0 +1,36 @@
+{% extends 'pipeline/base.html' %}
+
+{% block title %}Manage Users{% endblock %}
+
+{% block content %}
+<div style="margin-top:1.5rem;">
+  <h1 class="page-title" style="margin-bottom:1.5rem;">Manage Users</h1>
+
+  <div class="card">
+    <table style="width:100%; border-collapse:collapse;">
+      <thead>
+        <tr style="color:var(--muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.5px;">
+          <th style="text-align:left; padding:0.6rem 0.5rem; border-bottom:1px solid var(--border);">Username</th>
+          <th style="text-align:left; padding:0.6rem 0.5rem; border-bottom:1px solid var(--border);">Email</th>
+          <th style="text-align:left; padding:0.6rem 0.5rem; border-bottom:1px solid var(--border);">Team</th>
+          <th style="text-align:left; padding:0.6rem 0.5rem; border-bottom:1px solid var(--border);">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:0.7rem 0.5rem;">{{ u.username }}</td>
+          <td style="padding:0.7rem 0.5rem; color:var(--muted); font-size:0.875rem;">{{ u.email|default:"—" }}</td>
+          <td style="padding:0.7rem 0.5rem;">
+            <span class="team-badge stage-{{ u.profile.team }}">{{ u.profile.get_team_display }}</span>
+          </td>
+          <td style="padding:0.7rem 0.5rem;">
+            <a href="{% url 'edit_user_team' u.pk %}" class="btn btn-secondary btn-sm">Change Team</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
